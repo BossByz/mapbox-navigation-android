@@ -20,6 +20,8 @@ import com.mapbox.navigation.base.trip.model.RouteProgress;
 import com.mapbox.navigation.core.MapboxNavigation;
 import com.mapbox.navigation.ui.utils.CompareUtils;
 
+import org.jetbrains.annotations.TestOnly;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +46,12 @@ public class NavigationMapRoute implements LifecycleObserver {
   @StyleRes
   private final int styleRes;
   private final String belowLayer;
+  @NonNull
   private final MapboxMap mapboxMap;
+  @NonNull
   private final MapView mapView;
+  @NonNull
+  private final LifecycleOwner lifecycleOwner;
   private MapRouteClickListener mapRouteClickListener;
   private MapRouteProgressChangeListener mapRouteProgressChangeListener;
   private boolean isMapClickListenerAdded = false;
@@ -60,108 +66,6 @@ public class NavigationMapRoute implements LifecycleObserver {
   /**
    * Construct an instance of {@link NavigationMapRoute}.
    *
-   * @param mapView   the MapView to apply the route to
-   * @param mapboxMap the MapboxMap to apply route with
-   * @since 0.4.0
-   */
-  public NavigationMapRoute(@NonNull MapView mapView, @NonNull MapboxMap mapboxMap) {
-    this(null, mapView, mapboxMap, R.style.NavigationMapRoute);
-  }
-
-  /**
-   * Construct an instance of {@link NavigationMapRoute}.
-   *
-   * @param mapView    the MapView to apply the route to
-   * @param mapboxMap  the MapboxMap to apply route with
-   * @param belowLayer optionally pass in a layer id to place the route line below
-   * @since 0.4.0
-   */
-  public NavigationMapRoute(@NonNull MapView mapView, @NonNull MapboxMap mapboxMap,
-                            @Nullable String belowLayer) {
-    this(null, mapView, mapboxMap, R.style.NavigationMapRoute, belowLayer);
-  }
-
-  /**
-   * Construct an instance of {@link NavigationMapRoute}.
-   *
-   * @param navigation an instance of the {@link MapboxNavigation} object. Passing in null means
-   *                   your route won't consider rerouting during a navigation session.
-   * @param mapView    the MapView to apply the route to
-   * @param mapboxMap  the MapboxMap to apply route with
-   * @since 0.4.0
-   */
-  public NavigationMapRoute(@Nullable MapboxNavigation navigation, @NonNull MapView mapView,
-                            @NonNull MapboxMap mapboxMap) {
-    this(navigation, mapView, mapboxMap, R.style.NavigationMapRoute);
-  }
-
-  /**
-   * Construct an instance of {@link NavigationMapRoute}.
-   *
-   * @param navigation an instance of the {@link MapboxNavigation} object. Passing in null means
-   *                   your route won't consider rerouting during a navigation session.
-   * @param mapView    the MapView to apply the route to
-   * @param mapboxMap  the MapboxMap to apply route with
-   * @param belowLayer optionally pass in a layer id to place the route line below
-   * @since 0.4.0
-   */
-  public NavigationMapRoute(@Nullable MapboxNavigation navigation, @NonNull MapView mapView,
-                            @NonNull MapboxMap mapboxMap, @Nullable String belowLayer) {
-    this(navigation, mapView, mapboxMap, R.style.NavigationMapRoute, belowLayer);
-  }
-
-  /**
-   * Construct an instance of {@link NavigationMapRoute}.
-   *
-   * @param navigation an instance of the {@link MapboxNavigation} object. Passing in null means
-   *                   your route won't consider rerouting during a navigation session.
-   * @param mapView    the MapView to apply the route to
-   * @param mapboxMap  the MapboxMap to apply route with
-   * @param styleRes   a style resource with custom route colors, scale, etc.
-   */
-  public NavigationMapRoute(@Nullable MapboxNavigation navigation, @NonNull MapView mapView,
-                            @NonNull MapboxMap mapboxMap, @StyleRes int styleRes) {
-    this(navigation, mapView, mapboxMap, styleRes, null);
-  }
-
-  /**
-   * Construct an instance of {@link NavigationMapRoute}.
-   *
-   * @param navigation an instance of the {@link MapboxNavigation} object. Passing in null means
-   *                   your route won't consider rerouting during a navigation session.
-   * @param mapView    the MapView to apply the route to
-   * @param mapboxMap  the MapboxMap to apply route with
-   * @param styleRes   a style resource with custom route colors, scale, etc.
-   * @param belowLayer optionally pass in a layer id to place the route line below
-   */
-  public NavigationMapRoute(@Nullable MapboxNavigation navigation, @NonNull MapView mapView,
-                            @NonNull MapboxMap mapboxMap, @StyleRes int styleRes,
-                            @Nullable String belowLayer) {
-    this(navigation, mapView, mapboxMap, styleRes, belowLayer, false, null);
-  }
-
-  /**
-   * Construct an instance of {@link NavigationMapRoute}.
-   *
-   * @param navigation an instance of the {@link MapboxNavigation} object. Passing in null means
-   *                   your route won't consider rerouting during a navigation session.
-   * @param mapView    the MapView to apply the route to
-   * @param mapboxMap  the MapboxMap to apply route with
-   * @param styleRes   a style resource with custom route colors, scale, etc.
-   * @param belowLayer optionally pass in a layer id to place the route line below
-   * @param routeLineInitializedCallback called to indicate that the route line layer has been added
-   *                   to the current style
-   */
-  public NavigationMapRoute(@Nullable MapboxNavigation navigation, @NonNull MapView mapView,
-                            @NonNull MapboxMap mapboxMap, @StyleRes int styleRes,
-                            @Nullable String belowLayer,
-                            @Nullable MapRouteLineInitializedCallback routeLineInitializedCallback) {
-    this(navigation, mapView, mapboxMap, styleRes, belowLayer, false, routeLineInitializedCallback);
-  }
-
-  /**
-   * Construct an instance of {@link NavigationMapRoute}.
-   *
    * @param navigation an instance of the {@link MapboxNavigation} object. Passing in null means
    *                   your route won't consider rerouting during a navigation session.
    * @param mapView    the MapView to apply the route to
@@ -170,10 +74,14 @@ public class NavigationMapRoute implements LifecycleObserver {
    * @param belowLayer optionally pass in a layer id to place the route line below
    * @param vanishRouteLineEnabled determines if the route line should vanish behind the puck during navigation.
    */
-  public NavigationMapRoute(@Nullable MapboxNavigation navigation, @NonNull MapView mapView,
-                            @NonNull MapboxMap mapboxMap, @StyleRes int styleRes,
-                            @Nullable String belowLayer, Boolean vanishRouteLineEnabled,
-                            @Nullable MapRouteLineInitializedCallback routeLineInitializedCallback) {
+  private NavigationMapRoute(@Nullable MapboxNavigation navigation,
+                             @NonNull MapView mapView,
+                             @NonNull MapboxMap mapboxMap,
+                             @NonNull LifecycleOwner lifecycleOwner,
+                             @StyleRes int styleRes,
+                             @Nullable String belowLayer,
+                             Boolean vanishRouteLineEnabled,
+                             @Nullable MapRouteLineInitializedCallback routeLineInitializedCallback) {
     this.vanishRouteLineEnabled = vanishRouteLineEnabled;
     this.styleRes = styleRes;
     this.belowLayer = belowLayer;
@@ -193,13 +101,10 @@ public class NavigationMapRoute implements LifecycleObserver {
   }
 
   private void registerLifecycleObserver() {
-    final Context context = mapView.getContext();
-    if (context instanceof LifecycleOwner) {
-      ((LifecycleOwner)context).getLifecycle().addObserver(this);
-    }
+    lifecycleOwner.getLifecycle().addObserver(this);
   }
 
-  // For testing only
+  @TestOnly
   NavigationMapRoute(@Nullable MapboxNavigation navigation, @NonNull MapView mapView,
                      @NonNull MapboxMap mapboxMap, @StyleRes int styleRes, @Nullable String belowLayer,
                      MapRouteClickListener mapClickListener,
@@ -216,7 +121,7 @@ public class NavigationMapRoute implements LifecycleObserver {
     addListeners();
   }
 
-  // For testing only
+  @TestOnly
   NavigationMapRoute(@Nullable MapboxNavigation navigation, @NonNull MapView mapView,
                      @NonNull MapboxMap mapboxMap, @StyleRes int styleRes, @Nullable String belowLayer,
                      MapRouteClickListener mapClickListener,
@@ -360,7 +265,7 @@ public class NavigationMapRoute implements LifecycleObserver {
    * Called during the onStart event of the Lifecycle owner to initialize resources.
    */
   @OnLifecycleEvent(Lifecycle.Event.ON_START)
-  public void onStart() {
+  protected void onStart() {
     addListeners();
   }
 
@@ -368,7 +273,7 @@ public class NavigationMapRoute implements LifecycleObserver {
    * Called during the onStop event of the Lifecycle owner to clean up resources.
    */
   @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-  public void onStop() {
+  protected void onStop() {
     removeListeners();
   }
 
@@ -472,6 +377,61 @@ public class NavigationMapRoute implements LifecycleObserver {
   public void onNewRouteProgress(RouteProgress routeProgress) {
     if (mapRouteProgressChangeListener != null) {
       mapRouteProgressChangeListener.onRouteProgressChanged(routeProgress);
+    }
+  }
+
+  public static class Builder{
+    @NonNull private MapView mapView;
+    @NonNull private MapboxMap mapboxMap;
+    @NonNull private LifecycleOwner lifecycleOwner;
+    @Nullable private MapboxNavigation navigation;
+    @StyleRes private int styleRes = R.style.NavigationMapRoute;
+    @Nullable private String belowLayer;
+    private boolean vanishRouteLineEnabled = false;
+    @Nullable private MapRouteLineInitializedCallback routeLineInitializedCallback;
+
+    public Builder(@NonNull MapView mapView, @NonNull MapboxMap mapboxMap, @NonNull LifecycleOwner lifecycleOwner){
+      this.mapView = mapView;
+      this.mapboxMap = mapboxMap;
+      this.lifecycleOwner = lifecycleOwner;
+    }
+
+    public Builder withMapboxNavigation(@Nullable MapboxNavigation navigation){
+      this.navigation = navigation;
+      return this;
+    }
+
+    public Builder withStyle(@StyleRes int styleRes){
+      this.styleRes = styleRes;
+      return this;
+    }
+
+    public Builder withBelowLayer(@Nullable String belowLayer){
+      this.belowLayer = belowLayer;
+      return this;
+    }
+
+    public Builder withVanishRouteLineEnabled(boolean vanishRouteLineEnabled){
+      this.vanishRouteLineEnabled = vanishRouteLineEnabled;
+      return this;
+    }
+
+    public Builder withRouteLineInitializedCallback(@Nullable MapRouteLineInitializedCallback routeLineInitializedCallback){
+      this.routeLineInitializedCallback = routeLineInitializedCallback;
+      return this;
+    }
+
+    public NavigationMapRoute build(){
+      return new NavigationMapRoute(
+              navigation,
+              mapView,
+              mapboxMap,
+              lifecycleOwner,
+              styleRes,
+              belowLayer,
+              vanishRouteLineEnabled,
+              routeLineInitializedCallback
+      );
     }
   }
 }
