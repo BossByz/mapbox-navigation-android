@@ -80,7 +80,7 @@ public class NavigationMapRoute implements LifecycleObserver {
                              @NonNull LifecycleOwner lifecycleOwner,
                              @StyleRes int styleRes,
                              @Nullable String belowLayer,
-                             Boolean vanishRouteLineEnabled,
+                             boolean vanishRouteLineEnabled,
                              @Nullable MapRouteLineInitializedCallback routeLineInitializedCallback) {
     this.vanishRouteLineEnabled = vanishRouteLineEnabled;
     this.styleRes = styleRes;
