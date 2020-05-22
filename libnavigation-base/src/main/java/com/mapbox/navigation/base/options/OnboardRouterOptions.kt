@@ -32,14 +32,15 @@ data class OnboardRouterOptions(
          * Create and use the default options
          *
          * @param context is needed for the default destination [OnboardRouterOptions.tileFilePath].
+         * @return a builder with the default endpoint and destination file
          */
         @JvmStatic
-        fun createDefaultOptions(context: Context): OnboardRouterOptions {
+        fun defaultOptions(context: Context): Builder {
             val onboardEndpointOptions = OnboardRouterEndpointOptions.Builder().build()
             return Builder(
                 onboardRouterEndpointOptions = onboardEndpointOptions,
                 tileDestinationPath = onboardEndpointOptions.createDefaultTilePath(context)
-            ).build()
+            )
         }
     }
 

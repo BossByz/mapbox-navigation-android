@@ -36,6 +36,7 @@ import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.navigation.base.internal.extensions.applyDefaultParams
 import com.mapbox.navigation.base.internal.extensions.coordinates
 import com.mapbox.navigation.base.options.NavigationOptions
+import com.mapbox.navigation.base.options.OnboardRouterEndpointOptions
 import com.mapbox.navigation.base.options.OnboardRouterOptions
 import com.mapbox.navigation.base.trip.model.RouteProgress
 import com.mapbox.navigation.core.MapboxNavigation
@@ -136,24 +137,15 @@ class DebugMapboxNavigationKt : AppCompatActivity(), OnMapReadyCallback,
         val options =
                 MapboxNavigation.defaultNavigationOptions(this, Utils.getMapboxAccessToken(this))
 
-    val onboardRouterOptions = options.onboardRouterOptions
-        ?: OnboardRouterOptions.createDefaultOptions(this)
-
-    val updatedEndpointOptions = onboardRouterOptions.onboardRouterRouterEndpointOptions.toBuilder()
-        .tilesUri("https://api-routing-tiles-staging.tilestream.net")
-        .version("2020_02_02-03_00_00")
-        .build()
-
-    val onboardRouterConfig = onboardRouterOptions.toBuilder()
-        .endpoint(updatedEndpointOptions)
-        .tilePath(updatedEndpointOptions.createDefaultTilePath(this))
-        .build()
-
-        val newOptions =
-                options.toBuilder()
-                        .onboardRouterConfig(onboardRouterConfig)
-                        .navigatorPredictionMillis(1000L)
-                        .build()
+        val newOptions = options.toBuilder()
+            .onboardRouterConfig(OnboardRouterOptions.defaultOptions(this)
+                .endpoint(OnboardRouterEndpointOptions.Builder()
+                    .tilesUri("https://api-routing-tiles-staging.tilestream.net")
+                    .version("2020_02_02-03_00_00")
+                    .build()
+                ).build())
+            .navigatorPredictionMillis(1000L)
+            .build()
 
         mapboxNavigation = getMapboxNavigation(newOptions)
     }

@@ -691,7 +691,8 @@ constructor(
                 .navigatorPredictionMillis(DEFAULT_NAVIGATOR_PREDICTION_MILLIS)
                 .distanceFormatter(distanceFormatter)
 
-            builder.onboardRouterConfig(OnboardRouterOptions.createDefaultOptions(context))
+            val onboardRouterOptions = OnboardRouterOptions.defaultOptions(context).build()
+            builder.onboardRouterConfig(onboardRouterOptions)
 
             return builder.build()
         }
