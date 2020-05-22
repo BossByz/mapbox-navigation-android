@@ -21,7 +21,7 @@ import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.offline.OfflineManager;
 import com.mapbox.navigation.base.internal.extensions.ContextEx;
 import com.mapbox.navigation.base.formatter.DistanceFormatter;
-import com.mapbox.navigation.base.options.MapboxOnboardRouterConfig;
+import com.mapbox.navigation.base.options.OnboardRouterOptions;
 import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.base.trip.model.RouteProgress;
 import com.mapbox.navigation.base.TimeFormat;
@@ -192,9 +192,9 @@ public class NavigationViewModel extends AndroidViewModel {
       this.distanceFormatter = options.navigationOptions().getDistanceFormatter();
     }
 
-    if (options.navigationOptions().getOnboardRouterConfig() == null) {
-      MapboxOnboardRouterConfig routerConfig =
-        MapboxNavigation.defaultNavigationOptions(getApplication(), accessToken).getOnboardRouterConfig();
+    if (options.navigationOptions().getOnboardRouterOptions() == null) {
+      OnboardRouterOptions routerConfig =
+        MapboxNavigation.defaultNavigationOptions(getApplication(), accessToken).getOnboardRouterOptions();
       updatedOptionsBuilder.onboardRouterConfig(routerConfig);
     }
 

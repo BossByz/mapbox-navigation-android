@@ -10,7 +10,7 @@ import com.mapbox.base.common.logger.Logger
 import com.mapbox.base.common.logger.model.Message
 import com.mapbox.base.common.logger.model.Tag
 import com.mapbox.navigation.base.internal.accounts.SkuTokenProvider
-import com.mapbox.navigation.base.options.MapboxOnboardRouterConfig
+import com.mapbox.navigation.base.options.OnboardRouterOptions
 import com.mapbox.navigation.base.route.RouteRefreshCallback
 import com.mapbox.navigation.base.route.Router
 import com.mapbox.navigation.base.route.internal.RouteUrl
@@ -30,11 +30,11 @@ import kotlinx.coroutines.withContext
  * MapboxOnboardRouter provides offline route fetching
  *
  * It uses offline storage path to store and retrieve data, setup endpoint,
- * tiles' version, token. Config is provided via [MapboxOnboardRouterConfig].
+ * tiles' version, token. Config is provided via [OnboardRouterOptions].
  *
  * @param accessToken Mapbox token
  * @param navigatorNative Native Navigator
- * @param config configuration for on-board router
+ * @param options configuration for on-board router
  * @param logger interface for logging any events
  * @param skuTokenProvider skuTokenProvider [SkuTokenProvider]
  */
@@ -42,7 +42,7 @@ import kotlinx.coroutines.withContext
 class MapboxOnboardRouter(
     private val accessToken: String,
     private val navigatorNative: MapboxNativeNavigator,
-    config: MapboxOnboardRouterConfig,
+    options: OnboardRouterOptions,
     private val logger: Logger,
     private val skuTokenProvider: SkuTokenProvider
 ) : Router {
@@ -57,19 +57,19 @@ class MapboxOnboardRouter(
     private val gson = Gson()
 
     init {
-        if (config.tilePath.isNotEmpty()) {
-            val tileDir = File(config.tilePath)
+        if (options.tileFilePath.isNotEmpty()) {
+            val tileDir = File(options.tileFilePath)
             if (!tileDir.exists()) {
                 tileDir.mkdirs()
             }
             val routerParams = RouterParams(
                 tileDir.absolutePath,
-                config.inMemoryTileCache,
-                config.mapMatchingSpatialCache,
-                config.threadsCount,
-                config.endpoint?.let {
+                options.inMemoryTileCache,
+                options.mapMatchingSpatialCache,
+                options.threadsCount,
+                options.onboardRouterRouterEndpointOptions?.let {
                     TileEndpointConfiguration(
-                        it.host,
+                        it.tilesUri.toString(),
                         it.version,
                         accessToken,
                         it.userAgent,

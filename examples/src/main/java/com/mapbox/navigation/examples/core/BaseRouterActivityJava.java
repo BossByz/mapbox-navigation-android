@@ -3,7 +3,6 @@ package com.mapbox.navigation.examples.core;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +31,7 @@ import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.navigation.base.metrics.MetricsObserver;
 import com.mapbox.navigation.base.options.HandheldProfile;
-import com.mapbox.navigation.base.options.MapboxOnboardRouterConfig;
+import com.mapbox.navigation.base.options.OnboardRouterOptions;
 import com.mapbox.navigation.base.route.Router;
 import com.mapbox.navigation.core.internal.accounts.MapboxNavigationAccounts;
 import com.mapbox.navigation.examples.R;
@@ -47,7 +46,6 @@ import com.mapbox.navigation.utils.internal.NetworkStatusService;
 import com.mapbox.turf.TurfConstants;
 import com.mapbox.turf.TurfMeasurement;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,22 +80,12 @@ public abstract class BaseRouterActivityJava extends AppCompatActivity
   }
 
   public static Router setupOnboardRouter(Context context) {
-    File file = new File(
-        Environment.getExternalStoragePublicDirectory("Offline").getAbsolutePath(),
-        "2019_04_13-00_00_11");
-    File fileTiles = new File(file, "tiles");
-    MapboxOnboardRouterConfig config = new MapboxOnboardRouterConfig(
-        fileTiles.getAbsolutePath(),
-        null,
-        null,
-        null,
-        null // working with pre-fetched tiles only
-    );
+    OnboardRouterOptions onboardRouterOptions = OnboardRouterOptions.createDefaultOptions(context);
 
     return new MapboxOnboardRouter(
             Utils.getMapboxAccessToken(context),
             MapboxNativeNavigatorImpl.INSTANCE.create(new HandheldProfile()),
-            config,
+            onboardRouterOptions,
             MapboxLogger.INSTANCE,
             MapboxNavigationAccounts.getInstance(context)
     );
