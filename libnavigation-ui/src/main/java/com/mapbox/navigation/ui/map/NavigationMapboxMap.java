@@ -81,11 +81,11 @@ public class NavigationMapboxMap implements LifecycleObserver {
     = new MapWayNameChangedListener(onWayNameChangedListeners);
   private NavigationMapSettings settings = new NavigationMapSettings();
   @NonNull
-  private final MapView mapView;
+  private MapView mapView;
   @NonNull
-  private final MapboxMap mapboxMap;
+  private MapboxMap mapboxMap;
   @NonNull
-  private final LifecycleOwner lifecycleOwner;
+  private LifecycleOwner lifecycleOwner;
   private LocationComponent locationComponent;
   private MapPaddingAdjustor mapPaddingAdjustor;
   private NavigationSymbolManager navigationSymbolManager;
@@ -108,6 +108,7 @@ public class NavigationMapboxMap implements LifecycleObserver {
    *
    * @param mapView   for map size and Context
    * @param mapboxMap for APIs to interact with the map
+   * @param lifecycleOwner provides lifecycle for component
    */
   public NavigationMapboxMap(@NonNull MapView mapView,
                              @NonNull MapboxMap mapboxMap,
@@ -121,6 +122,7 @@ public class NavigationMapboxMap implements LifecycleObserver {
    *
    * @param mapView   for map size and Context
    * @param mapboxMap for APIs to interact with the map
+   * @param lifecycleOwner provides lifecycle for component
    * @param vanishRouteLineEnabled determines if the route line should vanish behind the puck during navigation.
    */
   public NavigationMapboxMap(@NonNull MapView mapView,
@@ -136,6 +138,7 @@ public class NavigationMapboxMap implements LifecycleObserver {
    *
    * @param mapView           for map size and Context
    * @param mapboxMap         for APIs to interact with the map
+   * @param lifecycleOwner provides lifecycle for component
    * @param routeBelowLayerId optionally pass in a layer id to place the route line below
    */
   public NavigationMapboxMap(@NonNull MapView mapView,
@@ -151,6 +154,7 @@ public class NavigationMapboxMap implements LifecycleObserver {
    *
    * @param mapView           for map size and Context
    * @param mapboxMap         for APIs to interact with the map
+   * @param lifecycleOwner provides lifecycle for component
    * @param routeBelowLayerId optionally pass in a layer id to place the route line below
    * @param vanishRouteLineEnabled determines if the route line should vanish behind the puck during navigation.
    */
@@ -162,6 +166,7 @@ public class NavigationMapboxMap implements LifecycleObserver {
     this.mapView = mapView;
     this.mapboxMap = mapboxMap;
     this.vanishRouteLineEnabled = vanishRouteLineEnabled;
+    this.lifecycleOwner = lifecycleOwner;
     registerLifecycleOwnerObserver();
     initializeMapPaddingAdjustor(mapView, mapboxMap);
     initializeNavigationSymbolManager(mapView, mapboxMap);

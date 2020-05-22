@@ -70,9 +70,11 @@ public class NavigationMapRoute implements LifecycleObserver {
    *                   your route won't consider rerouting during a navigation session.
    * @param mapView    the MapView to apply the route to
    * @param mapboxMap  the MapboxMap to apply route with
+   * @param lifecycleOwner provides lifecycle for the component
    * @param styleRes   a style resource with custom route colors, scale, etc.
    * @param belowLayer optionally pass in a layer id to place the route line below
    * @param vanishRouteLineEnabled determines if the route line should vanish behind the puck during navigation.
+   * @param routeLineInitializedCallback indicates that the route line layer has been added to the current style
    */
   private NavigationMapRoute(@Nullable MapboxNavigation navigation,
                              @NonNull MapView mapView,
@@ -96,6 +98,7 @@ public class NavigationMapRoute implements LifecycleObserver {
             routeArrow, vanishRouteLineEnabled
     );
     this.routeLineInitializedCallback = routeLineInitializedCallback;
+    this.lifecycleOwner = lifecycleOwner;
     initializeDidFinishLoadingStyleListener();
     registerLifecycleObserver();
   }
@@ -105,16 +108,21 @@ public class NavigationMapRoute implements LifecycleObserver {
   }
 
   @TestOnly
-  NavigationMapRoute(@Nullable MapboxNavigation navigation, @NonNull MapView mapView,
-                     @NonNull MapboxMap mapboxMap, @StyleRes int styleRes, @Nullable String belowLayer,
+  NavigationMapRoute(@Nullable MapboxNavigation navigation,
+                     @NonNull MapView mapView,
+                     @NonNull MapboxMap mapboxMap,
+                     @NonNull LifecycleOwner lifecycleOwner,
+                     @StyleRes int styleRes,
+                     @Nullable String belowLayer,
                      MapRouteClickListener mapClickListener,
                      MapView.OnDidFinishLoadingStyleListener didFinishLoadingStyleListener,
                      MapRouteProgressChangeListener progressChangeListener) {
-    this.styleRes = styleRes;
-    this.belowLayer = belowLayer;
+    this.navigation = navigation;
     this.mapView = mapView;
     this.mapboxMap = mapboxMap;
-    this.navigation = navigation;
+    this.lifecycleOwner = lifecycleOwner;
+    this.styleRes = styleRes;
+    this.belowLayer = belowLayer;
     this.mapRouteClickListener = mapClickListener;
     this.didFinishLoadingStyleListener = didFinishLoadingStyleListener;
     this.mapRouteProgressChangeListener = progressChangeListener;
@@ -122,18 +130,23 @@ public class NavigationMapRoute implements LifecycleObserver {
   }
 
   @TestOnly
-  NavigationMapRoute(@Nullable MapboxNavigation navigation, @NonNull MapView mapView,
-                     @NonNull MapboxMap mapboxMap, @StyleRes int styleRes, @Nullable String belowLayer,
+  NavigationMapRoute(@Nullable MapboxNavigation navigation,
+                     @NonNull MapView mapView,
+                     @NonNull MapboxMap mapboxMap,
+                     @NonNull LifecycleOwner lifecycleOwner,
+                     @StyleRes int styleRes,
+                     @Nullable String belowLayer,
                      MapRouteClickListener mapClickListener,
                      MapView.OnDidFinishLoadingStyleListener didFinishLoadingStyleListener,
                      MapRouteProgressChangeListener progressChangeListener,
                      MapRouteLine routeLine,
                      MapRouteArrow routeArrow) {
-    this.styleRes = styleRes;
-    this.belowLayer = belowLayer;
+    this.navigation = navigation;
     this.mapView = mapView;
     this.mapboxMap = mapboxMap;
-    this.navigation = navigation;
+    this.lifecycleOwner = lifecycleOwner;
+    this.styleRes = styleRes;
+    this.belowLayer = belowLayer;
     this.mapRouteClickListener = mapClickListener;
     this.didFinishLoadingStyleListener = didFinishLoadingStyleListener;
     this.mapRouteProgressChangeListener = progressChangeListener;
@@ -380,6 +393,9 @@ public class NavigationMapRoute implements LifecycleObserver {
     }
   }
 
+  /**
+   * The Builder of {@link NavigationMapRoute}.
+   */
   public static class Builder{
     @NonNull private MapView mapView;
     @NonNull private MapboxMap mapboxMap;
@@ -390,37 +406,68 @@ public class NavigationMapRoute implements LifecycleObserver {
     private boolean vanishRouteLineEnabled = false;
     @Nullable private MapRouteLineInitializedCallback routeLineInitializedCallback;
 
+    /**
+     * Instantiates a new Builder.
+     *
+     * @param mapView    the MapView to apply the route to
+     * @param mapboxMap  the MapboxMap to apply route with
+     * @param lifecycleOwner provides lifecycle for the component
+     */
     public Builder(@NonNull MapView mapView, @NonNull MapboxMap mapboxMap, @NonNull LifecycleOwner lifecycleOwner){
       this.mapView = mapView;
       this.mapboxMap = mapboxMap;
       this.lifecycleOwner = lifecycleOwner;
     }
 
+    /**
+     * An instance of the {@link MapboxNavigation} object. Default is null that means
+     * your route won't consider rerouting during a navigation session.
+     * @return the builder
+     */
     public Builder withMapboxNavigation(@Nullable MapboxNavigation navigation){
       this.navigation = navigation;
       return this;
     }
 
+    /**
+     * Style resource with custom route colors, scale, etc. Default value is R.style.NavigationMapRoute
+     * @return the builder
+     */
     public Builder withStyle(@StyleRes int styleRes){
       this.styleRes = styleRes;
       return this;
     }
 
+    /**
+     * BelowLayer optionally pass in a layer id to place the route line below
+     * @return the builder
+     */
     public Builder withBelowLayer(@Nullable String belowLayer){
       this.belowLayer = belowLayer;
       return this;
     }
 
+    /**
+     * Determines if the route line should vanish behind the puck during navigation. By default is `false`
+     * @return the builder
+     */
     public Builder withVanishRouteLineEnabled(boolean vanishRouteLineEnabled){
       this.vanishRouteLineEnabled = vanishRouteLineEnabled;
       return this;
     }
 
+    /**
+     * Indicate that the route line layer has been added to the current style
+     * @return the builder
+     */
     public Builder withRouteLineInitializedCallback(@Nullable MapRouteLineInitializedCallback routeLineInitializedCallback){
       this.routeLineInitializedCallback = routeLineInitializedCallback;
       return this;
     }
 
+    /**
+     * Build an instance of {@link NavigationMapRoute}
+     */
     public NavigationMapRoute build(){
       return new NavigationMapRoute(
               navigation,
