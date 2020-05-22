@@ -93,7 +93,7 @@ data class NavigationOptions(
         /**
          * Defines configuration for the default on-board router
          */
-        fun onboardRouterConfig(onboardRouterOptions: OnboardRouterOptions?) =
+        fun onboardRouterOptions(onboardRouterOptions: OnboardRouterOptions?) =
             apply { this.onboardRouterOptions = onboardRouterOptions }
 
         /**

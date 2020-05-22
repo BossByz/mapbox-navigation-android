@@ -692,7 +692,7 @@ constructor(
                 .distanceFormatter(distanceFormatter)
 
             val onboardRouterOptions = OnboardRouterOptions.defaultOptions(context).build()
-            builder.onboardRouterConfig(onboardRouterOptions)
+            builder.onboardRouterOptions(onboardRouterOptions)
 
             return builder.build()
         }

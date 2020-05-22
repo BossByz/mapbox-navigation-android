@@ -138,7 +138,7 @@ class DebugMapboxNavigationKt : AppCompatActivity(), OnMapReadyCallback,
                 MapboxNavigation.defaultNavigationOptions(this, Utils.getMapboxAccessToken(this))
 
         val newOptions = options.toBuilder()
-            .onboardRouterConfig(OnboardRouterOptions.defaultOptions(this)
+            .onboardRouterOptions(OnboardRouterOptions.defaultOptions(this)
                 .endpoint(OnboardRouterEndpointOptions.Builder()
                     .tilesUri("https://api-routing-tiles-staging.tilestream.net")
                     .version("2020_02_02-03_00_00")

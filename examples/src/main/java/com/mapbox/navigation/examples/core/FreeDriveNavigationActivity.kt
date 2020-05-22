@@ -63,7 +63,7 @@ class FreeDriveNavigationActivity : AppCompatActivity(), OnMapReadyCallback {
         )
 
         val updatedOptions = mapboxNavigationOptions.toBuilder()
-            .onboardRouterConfig(OnboardRouterOptions.defaultOptions(this)
+            .onboardRouterOptions(OnboardRouterOptions.defaultOptions(this)
                 .endpoint(OnboardRouterEndpointOptions.Builder()
                     .tilesUri("https://api-routing-tiles-staging.tilestream.net")
                     .version("2020_02_02-03_00_00")

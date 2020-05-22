@@ -195,7 +195,7 @@ public class NavigationViewModel extends AndroidViewModel {
     if (options.navigationOptions().getOnboardRouterOptions() == null) {
       OnboardRouterOptions routerConfig =
         MapboxNavigation.defaultNavigationOptions(getApplication(), accessToken).getOnboardRouterOptions();
-      updatedOptionsBuilder.onboardRouterConfig(routerConfig);
+      updatedOptionsBuilder.onboardRouterOptions(routerConfig);
     }
 
     NavigationOptions updatedOptions = updatedOptionsBuilder.build();

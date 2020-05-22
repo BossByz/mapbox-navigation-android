@@ -81,7 +81,7 @@ class MapboxNavigationTest {
         .accessToken(accessToken)
         .distanceFormatter(distanceFormatter)
         .navigatorPredictionMillis(1500L)
-        .onboardRouterConfig(onBoardRouterOptions)
+        .onboardRouterOptions(onBoardRouterOptions)
         .timeFormatType(NONE_SPECIFIED)
         .build()
 
