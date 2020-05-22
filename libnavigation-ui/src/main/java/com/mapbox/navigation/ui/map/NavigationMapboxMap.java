@@ -827,7 +827,7 @@ public class NavigationMapboxMap implements LifecycleObserver {
     }
   }
 
-  private void registerLifecycleOwnerObserver(){
+  private void registerLifecycleOwnerObserver() {
     lifecycleOwner.getLifecycle().addObserver(this);
   }
 

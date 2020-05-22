@@ -396,7 +396,7 @@ public class NavigationMapRoute implements LifecycleObserver {
   /**
    * The Builder of {@link NavigationMapRoute}.
    */
-  public static class Builder{
+  public static class Builder {
     @NonNull private MapView mapView;
     @NonNull private MapboxMap mapboxMap;
     @NonNull private LifecycleOwner lifecycleOwner;
@@ -413,7 +413,7 @@ public class NavigationMapRoute implements LifecycleObserver {
      * @param mapboxMap  the MapboxMap to apply route with
      * @param lifecycleOwner provides lifecycle for the component
      */
-    public Builder(@NonNull MapView mapView, @NonNull MapboxMap mapboxMap, @NonNull LifecycleOwner lifecycleOwner){
+    public Builder(@NonNull MapView mapView, @NonNull MapboxMap mapboxMap, @NonNull LifecycleOwner lifecycleOwner) {
       this.mapView = mapView;
       this.mapboxMap = mapboxMap;
       this.lifecycleOwner = lifecycleOwner;
@@ -424,7 +424,7 @@ public class NavigationMapRoute implements LifecycleObserver {
      * your route won't consider rerouting during a navigation session.
      * @return the builder
      */
-    public Builder withMapboxNavigation(@Nullable MapboxNavigation navigation){
+    public Builder withMapboxNavigation(@Nullable MapboxNavigation navigation) {
       this.navigation = navigation;
       return this;
     }
@@ -433,7 +433,7 @@ public class NavigationMapRoute implements LifecycleObserver {
      * Style resource with custom route colors, scale, etc. Default value is R.style.NavigationMapRoute
      * @return the builder
      */
-    public Builder withStyle(@StyleRes int styleRes){
+    public Builder withStyle(@StyleRes int styleRes) {
       this.styleRes = styleRes;
       return this;
     }
@@ -442,7 +442,7 @@ public class NavigationMapRoute implements LifecycleObserver {
      * BelowLayer optionally pass in a layer id to place the route line below
      * @return the builder
      */
-    public Builder withBelowLayer(@Nullable String belowLayer){
+    public Builder withBelowLayer(@Nullable String belowLayer) {
       this.belowLayer = belowLayer;
       return this;
     }
@@ -451,7 +451,7 @@ public class NavigationMapRoute implements LifecycleObserver {
      * Determines if the route line should vanish behind the puck during navigation. By default is `false`
      * @return the builder
      */
-    public Builder withVanishRouteLineEnabled(boolean vanishRouteLineEnabled){
+    public Builder withVanishRouteLineEnabled(boolean vanishRouteLineEnabled) {
       this.vanishRouteLineEnabled = vanishRouteLineEnabled;
       return this;
     }
@@ -460,7 +460,9 @@ public class NavigationMapRoute implements LifecycleObserver {
      * Indicate that the route line layer has been added to the current style
      * @return the builder
      */
-    public Builder withRouteLineInitializedCallback(@Nullable MapRouteLineInitializedCallback routeLineInitializedCallback){
+    public Builder withRouteLineInitializedCallback(
+            @Nullable MapRouteLineInitializedCallback routeLineInitializedCallback
+    ) {
       this.routeLineInitializedCallback = routeLineInitializedCallback;
       return this;
     }
@@ -468,7 +470,7 @@ public class NavigationMapRoute implements LifecycleObserver {
     /**
      * Build an instance of {@link NavigationMapRoute}
      */
-    public NavigationMapRoute build(){
+    public NavigationMapRoute build() {
       return new NavigationMapRoute(
               navigation,
               mapView,
