@@ -36,7 +36,6 @@ import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.navigation.base.internal.extensions.applyDefaultParams
 import com.mapbox.navigation.base.internal.extensions.coordinates
 import com.mapbox.navigation.base.options.NavigationOptions
-import com.mapbox.navigation.base.options.OnboardRouterEndpointOptions
 import com.mapbox.navigation.base.options.OnboardRouterOptions
 import com.mapbox.navigation.base.trip.model.RouteProgress
 import com.mapbox.navigation.core.MapboxNavigation
@@ -138,12 +137,10 @@ class DebugMapboxNavigationKt : AppCompatActivity(), OnMapReadyCallback,
                 MapboxNavigation.defaultNavigationOptions(this, Utils.getMapboxAccessToken(this))
 
         val newOptions = options.toBuilder()
-            .onboardRouterOptions(OnboardRouterOptions.defaultOptions(this)
-                .endpoint(OnboardRouterEndpointOptions.Builder()
-                    .tilesUri("https://api-routing-tiles-staging.tilestream.net")
-                    .version("2020_02_02-03_00_00")
-                    .build()
-                ).build())
+            .onboardRouterOptions(OnboardRouterOptions.Builder()
+                .tilesUri("https://api-routing-tiles-staging.tilestream.net")
+                .version("2020_02_02-03_00_00")
+                .build(this))
             .navigatorPredictionMillis(1000L)
             .build()
 

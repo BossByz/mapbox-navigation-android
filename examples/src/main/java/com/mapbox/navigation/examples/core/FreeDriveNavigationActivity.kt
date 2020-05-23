@@ -13,7 +13,6 @@ import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.navigation.base.options.OnboardRouterEndpointOptions
 import com.mapbox.navigation.base.options.OnboardRouterOptions
 import com.mapbox.navigation.core.MapboxNavigation
 import com.mapbox.navigation.core.trip.session.TripSessionState
@@ -63,12 +62,10 @@ class FreeDriveNavigationActivity : AppCompatActivity(), OnMapReadyCallback {
         )
 
         val updatedOptions = mapboxNavigationOptions.toBuilder()
-            .onboardRouterOptions(OnboardRouterOptions.defaultOptions(this)
-                .endpoint(OnboardRouterEndpointOptions.Builder()
-                    .tilesUri("https://api-routing-tiles-staging.tilestream.net")
-                    .version("2020_02_02-03_00_00")
-                    .build()
-                ).build())
+            .onboardRouterOptions(OnboardRouterOptions.Builder()
+                .tilesUri("https://api-routing-tiles-staging.tilestream.net")
+                .version("2020_02_02-03_00_00")
+                .build(this))
             .build()
 
         mapboxNavigation = MapboxNavigation(

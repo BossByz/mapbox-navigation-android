@@ -58,26 +58,25 @@ class MapboxOnboardRouter(
     private val gson = Gson()
 
     init {
-        if (options.tileFilePath.isNotEmpty()) {
-            val tileDir = File(options.tileFilePath)
+        if (options.filePath.isNotEmpty()) {
+            val tileDir = File(options.filePath)
             if (!tileDir.exists()) {
                 tileDir.mkdirs()
             }
             val routerParams = RouterParams(
                 tileDir.absolutePath,
-                options.inMemoryTileCache,
-                options.mapMatchingSpatialCache,
-                options.threadsCount,
-                options.onboardRouterRouterEndpointOptions.let {
-                    TileEndpointConfiguration(
-                        it.tilesUri.toString(),
-                        it.version,
+                null,
+                null,
+                null,
+                TileEndpointConfiguration(
+                        options.tilesUri.toString(),
+                        options.version,
                         accessToken,
                         USER_AGENT,
                         "",
                         NativeSkuTokenProvider(skuTokenProvider)
                     )
-                })
+                )
             navigatorNative.configureRouter(routerParams, null)
         }
     }

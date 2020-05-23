@@ -1,25 +1,21 @@
 package com.mapbox.navigation.base.options
 
 import android.content.Context
+import java.io.File
+import java.net.URI
 
 /**
  * Defines options for on-board router. These options enable a feature also known as Free Drive.
  * This allows the navigator to map-match your location onto the road network without a route.
  *
- * @param onboardRouterRouterEndpointOptions options for requesting routing tiles
- * @param tileFilePath File path to store routing tiles
- *  @see [OnboardRouterEndpointOptions.createDefaultTilePath] for a default storage.
- * @param inMemoryTileCache Max size of tiles cache (optional)
- * @param mapMatchingSpatialCache Max size of cache for map matching (optional)
- * @param threadsCount Max count of native threads (optional)
+ * @param tilesUri tiles endpoint
+ * @param version version of tiles
  * @param builder used for updating options
  */
 data class OnboardRouterOptions(
-    val onboardRouterRouterEndpointOptions: OnboardRouterEndpointOptions,
-    val tileFilePath: String,
-    val inMemoryTileCache: Int?,
-    val mapMatchingSpatialCache: Int?,
-    val threadsCount: Int?,
+    val tilesUri: URI,
+    val version: String,
+    val filePath: String,
     val builder: Builder
 ) {
     /**
@@ -27,77 +23,44 @@ data class OnboardRouterOptions(
      */
     fun toBuilder() = builder
 
-    companion object {
-        /**
-         * Create and use the default options
-         *
-         * @param context is needed for the default destination [OnboardRouterOptions.tileFilePath].
-         * @return a builder with the default endpoint and destination file
-         */
-        @JvmStatic
-        fun defaultOptions(context: Context): Builder {
-            val onboardEndpointOptions = OnboardRouterEndpointOptions.Builder().build()
-            return Builder(
-                onboardRouterEndpointOptions = onboardEndpointOptions,
-                tileDestinationPath = onboardEndpointOptions.createDefaultTilePath(context)
-            )
-        }
-    }
-
     /**
      * Builder for [OnboardRouterOptions].
-     *
-     * @param onboardRouterEndpointOptions required source for the router tiles
-     * @param tileDestinationPath required file destination for the router tiles
      */
-    class Builder(
-        private var onboardRouterEndpointOptions: OnboardRouterEndpointOptions,
-        private var tileDestinationPath: String
-    ) {
-        private var inMemoryTileCache: Int? = null
-        private var mapMatchingSpatialCache: Int? = null
-        private var threadsCount: Int = 2
+    class Builder {
+        private var tilesUri: URI = URI("https://api.mapbox.com")
+        private var version: String = "2020_02_02-03_00_00"
 
         /**
-         * The source of the onboard router data.
+         * Override the routing tiles endpoint.
          */
-        fun endpoint(onboardRouterEndpointOptions: OnboardRouterEndpointOptions) =
-            apply { this.onboardRouterEndpointOptions = onboardRouterEndpointOptions }
+        fun tilesUri(tilesUri: String) =
+            apply { this.tilesUri = URI(tilesUri) }
+
+        fun tilesUri(tilesUri: URI) =
+            apply { this.tilesUri = tilesUri }
 
         /**
-         * File path where tiles will be stored.
+         * Override the routing tiles version.
          */
-        fun tilePath(tilePath: String) =
-            apply { this.tileDestinationPath = tilePath }
+        fun version(version: String) =
+            apply { this.version = version }
 
         /**
-         * Map size of tiles cache in bytes
+         * Creates a path to store the road network tiles.
          */
-        fun inMemoryTileCache(inMemoryTileCache: Int?) =
-            apply { this.inMemoryTileCache = inMemoryTileCache }
-
-        /**
-         * Max size of cache for map matching in bytes
-         */
-        fun mapMatchingSpatialCache(mapMatchingSpatialCache: Int?) =
-            apply { this.mapMatchingSpatialCache = mapMatchingSpatialCache }
-
-        /**
-         * Max count of native threads
-         */
-        fun threadsCount(threadsCount: Int) =
-            apply { this.threadsCount = threadsCount }
+        private fun defaultInternalDirectory(context: Context): String {
+            val directoryVersion = "Offline/${tilesUri.host}/$version/tiles"
+            return File(context.filesDir, directoryVersion).absolutePath
+        }
 
         /**
          * Build the [OnboardRouterOptions]
          */
-        fun build() = OnboardRouterOptions(
-            onboardRouterRouterEndpointOptions = onboardRouterEndpointOptions,
-            tileFilePath = tileDestinationPath,
-            inMemoryTileCache = inMemoryTileCache,
-            mapMatchingSpatialCache = mapMatchingSpatialCache,
-            threadsCount = threadsCount,
-            builder = this
+        fun build(context: Context) = OnboardRouterOptions(
+                tilesUri = tilesUri,
+                version = version,
+                filePath = defaultInternalDirectory(context),
+                builder = this
         )
     }
 }
