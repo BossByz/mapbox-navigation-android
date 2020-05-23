@@ -28,11 +28,14 @@ data class OnboardRouterOptions(
         private var version: String = "2020_02_02-03_00_00"
 
         /**
-         * Override the routing tiles endpoint.
+         * Override the routing tiles endpoint with a [String]
          */
         fun tilesUri(tilesUri: String) =
             apply { this.tilesUri = URI(tilesUri) }
 
+        /**
+         * Override the routing tiles endpoint with a [URI]
+         */
         fun tilesUri(tilesUri: URI) =
             apply { this.tilesUri = tilesUri }
 
