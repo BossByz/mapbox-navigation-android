@@ -65,7 +65,7 @@ class FreeDriveNavigationActivity : AppCompatActivity(), OnMapReadyCallback {
             .onboardRouterOptions(OnboardRouterOptions.Builder()
                 .tilesUri("https://api-routing-tiles-staging.tilestream.net")
                 .version("2020_02_02-03_00_00")
-                .build(this))
+                .build())
             .build()
 
         mapboxNavigation = MapboxNavigation(

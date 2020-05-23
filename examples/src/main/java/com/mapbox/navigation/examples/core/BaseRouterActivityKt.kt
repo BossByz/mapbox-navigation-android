@@ -273,9 +273,9 @@ abstract class BaseRouterActivityKt :
         }
 
         fun setupOnboardRouter(accessToken: String, deviceProfile: DeviceProfile, context: Context): Router {
-            val onboardRouterOptions = OnboardRouterOptions.Builder().build(context)
+            val onboardRouterOptions = OnboardRouterOptions.Builder().build()
             val nativeNavigator = MapboxNativeNavigatorImpl.create(deviceProfile)
-            return MapboxOnboardRouter(accessToken, nativeNavigator, onboardRouterOptions, MapboxLogger, MapboxNavigationAccounts.getInstance(context))
+            return MapboxOnboardRouter(context.applicationContext, accessToken, nativeNavigator, onboardRouterOptions, MapboxLogger, MapboxNavigationAccounts.getInstance(context))
         }
 
         fun setupHybridRouter(accessToken: String, deviceProfile: DeviceProfile, applicationContext: Context): Router {

@@ -80,9 +80,10 @@ public abstract class BaseRouterActivityJava extends AppCompatActivity
   }
 
   public static Router setupOnboardRouter(Context context) {
-    OnboardRouterOptions onboardRouterOptions = new OnboardRouterOptions.Builder().build(context);
+    OnboardRouterOptions onboardRouterOptions = new OnboardRouterOptions.Builder().build();
 
     return new MapboxOnboardRouter(
+            context.getApplicationContext(),
             Utils.getMapboxAccessToken(context),
             MapboxNativeNavigatorImpl.INSTANCE.create(new HandheldProfile()),
             onboardRouterOptions,

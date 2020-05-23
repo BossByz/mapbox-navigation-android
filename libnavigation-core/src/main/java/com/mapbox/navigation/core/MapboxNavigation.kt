@@ -598,6 +598,7 @@ constructor(
                 ),
                 Router::class.java to MapboxModuleProvider.createModule(
                     MapboxModuleType.NavigationOffboardRouter,
+
                     ::paramsProvider
                 ),
                 NetworkStatusService::class.java to NetworkStatusService(context.applicationContext)
@@ -611,6 +612,7 @@ constructor(
             MapboxModuleType.NavigationOnboardRouter -> {
                 check(accessToken != null) { MAPBOX_NAVIGATION_TOKEN_EXCEPTION_ONBOARD_ROUTER }
                 arrayOf(
+                    Context::class.java to context.applicationContext,
                     String::class.java to accessToken,
                     MapboxNativeNavigator::class.java to MapboxNativeNavigatorImpl,
                     OnboardRouterOptions::class.java to (navigationOptions.onboardRouterOptions
@@ -691,7 +693,7 @@ constructor(
                 .navigatorPredictionMillis(DEFAULT_NAVIGATOR_PREDICTION_MILLIS)
                 .distanceFormatter(distanceFormatter)
 
-            val onboardRouterOptions = OnboardRouterOptions.Builder().build(context)
+            val onboardRouterOptions = OnboardRouterOptions.Builder().build()
             builder.onboardRouterOptions(onboardRouterOptions)
 
             return builder.build()

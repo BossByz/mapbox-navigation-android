@@ -1,5 +1,6 @@
 package com.mapbox.navigation.route.onboard
 
+import android.content.Context
 import com.google.gson.Gson
 import com.mapbox.annotation.module.MapboxModule
 import com.mapbox.annotation.module.MapboxModuleType
@@ -40,6 +41,7 @@ import kotlinx.coroutines.withContext
  */
 @MapboxModule(MapboxModuleType.NavigationOnboardRouter)
 class MapboxOnboardRouter(
+    applicationContext: Context,
     private val accessToken: String,
     private val navigatorNative: MapboxNativeNavigator,
     options: OnboardRouterOptions,
@@ -58,8 +60,11 @@ class MapboxOnboardRouter(
     private val gson = Gson()
 
     init {
-        if (options.filePath.isNotEmpty()) {
-            val tileDir = File(options.filePath)
+        val directoryVersion = "Offline/${options.tilesUri.host}/${options.version}/tiles"
+        val tileFilePath = File(applicationContext.filesDir, directoryVersion).absolutePath
+
+        if (tileFilePath.isNotEmpty()) {
+            val tileDir = File(tileFilePath)
             if (!tileDir.exists()) {
                 tileDir.mkdirs()
             }
