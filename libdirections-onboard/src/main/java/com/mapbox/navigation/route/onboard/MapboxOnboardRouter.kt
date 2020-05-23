@@ -49,6 +49,7 @@ class MapboxOnboardRouter(
 
     companion object {
         private const val TAG = "MapboxOnboardRouter"
+        private const val USER_AGENT: String = "MapboxNavigationNative"
     }
 
     private val mainJobControl by lazy {
@@ -67,12 +68,12 @@ class MapboxOnboardRouter(
                 options.inMemoryTileCache,
                 options.mapMatchingSpatialCache,
                 options.threadsCount,
-                options.onboardRouterRouterEndpointOptions?.let {
+                options.onboardRouterRouterEndpointOptions.let {
                     TileEndpointConfiguration(
                         it.tilesUri.toString(),
                         it.version,
                         accessToken,
-                        it.userAgent,
+                        USER_AGENT,
                         "",
                         NativeSkuTokenProvider(skuTokenProvider)
                     )

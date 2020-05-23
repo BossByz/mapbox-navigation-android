@@ -9,13 +9,11 @@ import java.net.URI
  *
  * @param tilesUri tiles endpoint
  * @param version version of tiles
- * @param userAgent HttpClient UserAgent
  * @param builder used for updating options
  */
 data class OnboardRouterEndpointOptions(
     val tilesUri: URI,
     val version: String,
-    val userAgent: String,
     val builder: Builder
 ) {
     /**
@@ -37,7 +35,6 @@ data class OnboardRouterEndpointOptions(
     class Builder {
         private var tilesUri: String = "https://api.mapbox.com"
         private var version: String = "2020_02_02-03_00_00"
-        private var userAgent: String = "MapboxNavigationNative"
 
         /**
          * Override the routing tiles endpoint.
@@ -54,18 +51,11 @@ data class OnboardRouterEndpointOptions(
             apply { this.version = version }
 
         /**
-         * Override the HttpClient UserAgent
-         */
-        fun userAgent(userAgent: String) =
-            apply { this.userAgent = userAgent }
-
-        /**
          * Build the [OnboardRouterEndpointOptions]
          */
         fun build() = OnboardRouterEndpointOptions(
             tilesUri = URI(tilesUri),
             version = version,
-            userAgent = userAgent,
             builder = this
         )
     }
